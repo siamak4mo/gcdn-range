@@ -7,8 +7,7 @@ import (
 )
 
 type Downloader struct {
-	CIDR  []string
-	Provs []providers.Provider
+	Provs []*providers.Provider
 }
 
 func NewDownloader() *Downloader {
@@ -16,39 +15,36 @@ func NewDownloader() *Downloader {
 }
 
 func (dl *Downloader) Init() *Downloader {
-	dl.CIDR = make([]string, 0)
 	dl.Provs = nil
-
 	return dl
 }
 
 func (dl *Downloader) do() {
 	for _, p := range dl.Provs {
 		if p.Pr != nil {
-			tmp, e := p.Pr.GET(dl.CIDR)
-			if e == nil {
-				dl.CIDR = tmp
-
-			} else {
-				fmt.Fprintf(os.Stderr, "Could not download -- %v\n", e.Error())
+			p.DoFetch()
+			if p.DLerr != nil {
+				fmt.Fprintf(os.Stderr, "Could not download -- %v\n", p.DLerr)
 			}
 		}
 	}
 }
 
 func (dl *Downloader) DL_all() *Downloader {
-	dl.Provs = providers.CDNs
+	//	dl.Provs = make()//
 	dl.do()
 	return dl
 }
 
 func (dl *Downloader) DL_name(name string) *Downloader {
 	p, e := providers.SearchCDN(name)
+	dl.Provs = []*providers.Provider{&p}
+
 	if e == nil {
-		dl.Provs = []providers.Provider{p}
 		dl.do()
 	} else {
-		fmt.Fprintf(os.Stderr, "%s -- %s", p.Name, e.Error())
+		dl.Provs[0].DLerr = e
+		fmt.Fprintf(os.Stderr, "%s -- %v\n", name, e.Error())
 	}
 	return dl
 }
