@@ -54,7 +54,7 @@ var CDNs = []Provider{
 		"incapsula", Incapsula_CDN),
 	newProvider(nil,
 		"cachefly", Cachefly_CDN),
-	newProvider(nil,
+	newProvider(CloudFront__P{},
 		"cloudfront", Cloudfront_CDN),
 }
 
@@ -85,8 +85,11 @@ func GetCDN(prov int) (Provider, error) {
 
 func SearchCDN(name string) (Provider, error) {
 	switch name {
-	case "cloudflare":
+	case "cloudflare", "cf":
 		return CDNs[Cloudflare_CDN], nil
+
+	case "cloudfront", "aws", "amazon", "amazonaws":
+		return CDNs[Cloudfront_CDN], nil
 
 	default:
 		return Provider{}, errors.New(CDN_NAME_NOT_FOUND_ERR)
