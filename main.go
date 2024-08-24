@@ -6,7 +6,5 @@ import (
 
 func main() {
 	d := cmd.NewDownloader()
-
-	d.Init().DL_name("cloudflare").Raw_stdout()
-	d.Init().DL_name("test").Formatted_stdout()
+	d = d.Init(cmd.DL_IPv6).DL_name("cloudflare").SetOut(cmd.Formatted_stdout).Do()
 }
