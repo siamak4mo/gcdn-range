@@ -13,6 +13,7 @@ type Provider struct {
 	Name string
 	ID   cdn_type
 	CIDR  []string
+	DLerr error
 }
 
 type cdn_type int
@@ -34,27 +35,29 @@ const (
 // index of Provider in this array must be equal to it's ID
 var CDNs = []Provider{
 	{nil,
-		"maxcdn", Maxcdn_CDN, make([]string, 0)},
+		"maxcdn", Maxcdn_CDN, make([]string, 0), nil},
 	{CloudFlare__P{},
-		"cloudflare", Cloudflare_CDN, make([]string, 0)},
+		"cloudflare", Cloudflare_CDN, make([]string, 0), nil},
 	{nil,
-		"fastly", Fastly_CDN, make([]string, 0)},
+		"fastly", Fastly_CDN, make([]string, 0), nil},
 	{nil,
-		"incapsula", Incapsula_CDN, make([]string, 0)},
+		"incapsula", Incapsula_CDN, make([]string, 0), nil},
 	{nil,
-		"cachefly", Cachefly_CDN, make([]string, 0)},
+		"cachefly", Cachefly_CDN, make([]string, 0), nil},
 	{nil,
-		"cloudfront", Cloudfront_CDN, make([]string, 0)},
+		"cloudfront", Cloudfront_CDN, make([]string, 0), nil},
 }
 
-func (p *Provider) DoFetch() error{
+func (p *Provider) DoFetch() *Provider{
 	s, e := p.Pr.GET()
 	if e != nil {
-		return e
+		p.DLerr = e
+		return p
 	}
 
 	p.CIDR = s
-	return nil
+	p.DLerr = e
+	return p
 }
 
 func GetCDN(prov int) (Provider, error) {
