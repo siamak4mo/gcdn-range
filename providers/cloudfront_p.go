@@ -8,17 +8,12 @@ import (
 )
 
 type CloudFront__P struct {
-	RAW      []byte
-	Prefixes []struct {
-		IP_pref  string `json:"ip_prefix"`
-		IP6_pref string `json:"ip6_prefix"`
-	} `json:"prefixes"`
+	RAW []byte
 }
 
-func (cf CloudFront__P) GET(cout ProvChan) error {
-	defer func(){
+func (cf CloudFront__P) GET(cout ProvChan, flags int) error {
+	defer func() {
 		cf.RAW = nil
-		cf.Prefixes = nil
 		close(cout)
 	}()
 	const URL = "https://ip-ranges.amazonaws.com/ip-ranges.json"
@@ -37,15 +32,60 @@ func (cf CloudFront__P) GET(cout ProvChan) error {
 	if e != nil {
 		return e
 	}
-	e = json.Unmarshal(cf.RAW, &cf)
-	if e != nil {
-		return e
-	}
 
-	for _, ip := range cf.Prefixes {
-		if len(ip.IP_pref) != 0 {
+	switch flags {
+	case DL_IPv4:
+		d := struct {
+			Prefexs []struct {
+				IP_pref string `json:"ip_prefix"`
+			} `json:"prefixes"`
+		}{}
+
+		e = json.Unmarshal(cf.RAW, &d)
+		if e != nil {
+			return e
+		}
+
+		for _, ip := range d.Prefexs {
 			cout <- ip.IP_pref
 		}
+		break
+	case DL_IPv6:
+		d := struct {
+			Prefexs_v6 []struct {
+				IP_pref string `json:"ipv6_prefix"`
+			} `json:"ipv6_prefixes"`
+		}{}
+		e = json.Unmarshal(cf.RAW, &d)
+		if e != nil {
+			return e
+		}
+
+		for _, ip := range d.Prefexs_v6 {
+			cout <- ip.IP_pref
+		}
+		break
+	case DL_ALL:
+		d := struct {
+			Prefexs []struct {
+				IP_pref string `json:"ip_prefix"`
+			} `json:"prefixes"`
+			Prefexs_v6 []struct {
+				IP_pref string `json:"ipv6_prefix"`
+			} `json:"ipv6_prefixes"`
+		}{}
+		e = json.Unmarshal(cf.RAW, &d)
+		if e != nil {
+			return e
+		}
+
+		for _, ip := range d.Prefexs {
+			cout <- ip.IP_pref
+		}
+		for _, ip := range d.Prefexs_v6 {
+			cout <- ip.IP_pref
+		}
+		break
 	}
 	return nil
 }
