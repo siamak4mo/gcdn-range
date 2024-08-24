@@ -9,11 +9,11 @@ type CDN_Provider interface {
 }
 
 type Provider struct {
-	Pr   CDN_Provider
-	Name string
-	ID   cdn_type
-	CIDR  []string
+	Name  string
+	Pr    CDN_Provider
 	DLerr error
+	CIDR  []string
+	id    cdn_type
 }
 
 type cdn_type int
@@ -32,20 +32,30 @@ const (
 	CDN_NAME_NOT_FOUND_ERR = "CDN name not found"
 )
 
+func newProvider(pr CDN_Provider, name string, idx cdn_type) Provider {
+	return Provider{
+		Pr:    pr,
+		Name:  name,
+		id:    idx,
+		CIDR:  make([]string, 0),
+		DLerr: nil,
+	}
+}
+
 // index of Provider in this array must be equal to it's ID
 var CDNs = []Provider{
-	{nil,
-		"maxcdn", Maxcdn_CDN, make([]string, 0), nil},
-	{CloudFlare__P{},
-		"cloudflare", Cloudflare_CDN, make([]string, 0), nil},
-	{nil,
-		"fastly", Fastly_CDN, make([]string, 0), nil},
-	{nil,
-		"incapsula", Incapsula_CDN, make([]string, 0), nil},
-	{nil,
-		"cachefly", Cachefly_CDN, make([]string, 0), nil},
-	{nil,
-		"cloudfront", Cloudfront_CDN, make([]string, 0), nil},
+	newProvider(nil,
+		"maxcdn", Maxcdn_CDN),
+	newProvider(CloudFlare__P{},
+		"cloudflare", Cloudflare_CDN),
+	newProvider(nil,
+		"fastly", Fastly_CDN),
+	newProvider(nil,
+		"incapsula", Incapsula_CDN),
+	newProvider(nil,
+		"cachefly", Cachefly_CDN),
+	newProvider(nil,
+		"cloudfront", Cloudfront_CDN),
 }
 
 func (p *Provider) DoFetch() *Provider {
