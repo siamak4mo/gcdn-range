@@ -2,6 +2,7 @@ package providers
 
 import (
 	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
 )
@@ -14,35 +15,37 @@ type CloudFront__P struct {
 	} `json:"prefixes"`
 }
 
-func (cf CloudFront__P) GET() ([]string, error) {
+func (cf CloudFront__P) GET(cout ProvChan) error {
+	defer func(){
+		cf.RAW = nil
+		cf.Prefixes = nil
+		close(cout)
+	}()
 	const URL = "https://ip-ranges.amazonaws.com/ip-ranges.json"
+	if cout == nil {
+		return errors.New("Null Chanel")
+	}
 
 	res, e := http.Get(URL)
 	if e != nil {
-		return nil, e
+		return e
 	}
 	if res.StatusCode != http.StatusOK {
-		return nil, e
+		return e
 	}
-
 	cf.RAW, e = io.ReadAll(res.Body)
 	if e != nil {
-		return nil, e
+		return e
 	}
-
 	e = json.Unmarshal(cf.RAW, &cf)
 	if e != nil {
-		return nil, e
+		return e
 	}
-	cf.RAW = nil
 
-	r := make([]string, 0)
 	for _, ip := range cf.Prefixes {
 		if len(ip.IP_pref) != 0 {
-			r = append(r, ip.IP_pref)
+			cout <- ip.IP_pref
 		}
 	}
-	cf.Prefixes = nil
-
-	return r, nil
+	return nil
 }

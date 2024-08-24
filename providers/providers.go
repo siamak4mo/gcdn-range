@@ -4,15 +4,17 @@ import (
 	"errors"
 )
 
+type ProvChan chan string
+
 type CDN_Provider interface {
-	GET() ([]string, error)
+	GET(cout ProvChan) error
 }
 
 type Provider struct {
-	Name  string
 	Pr    CDN_Provider
+	CIDR  ProvChan
 	DLerr error
-	CIDR  []string
+	Name  string
 	id    cdn_type
 }
 
@@ -37,7 +39,6 @@ func newProvider(pr CDN_Provider, name string, idx cdn_type) Provider {
 		Pr:    pr,
 		Name:  name,
 		id:    idx,
-		CIDR:  make([]string, 0),
 		DLerr: nil,
 	}
 }
@@ -65,13 +66,11 @@ func (p *Provider) DoFetch() *Provider {
 		}
 		return p
 	}
-	s, e := p.Pr.GET()
+	e := p.Pr.GET(p.CIDR)
 	if e != nil {
 		p.DLerr = e
 		return p
 	}
-
-	p.CIDR = s
 	p.DLerr = e
 	return p
 }
