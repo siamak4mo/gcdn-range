@@ -94,6 +94,18 @@ func SearchCDN(name string) (Provider, error) {
 	case "cloudflare", "cf":
 		return CDNs[Cloudflare_CDN], nil
 
+	case "max", "maxcdn":
+		return CDNs[Maxcdn_CDN], nil
+
+	case "fastly", "fastlycdn", "fastlycloud":
+		return CDNs[Fastly_CDN], nil
+
+	case "incapsula", "incapsulacdn":
+		return CDNs[Incapsula_CDN], nil
+
+	case "cachefly":
+		return CDNs[Cachefly_CDN], nil
+
 	case "cloudfront", "aws", "amazon", "amazonaws":
 		return CDNs[Cloudfront_CDN], nil
 
