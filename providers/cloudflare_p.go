@@ -10,7 +10,7 @@ type CloudFlare__P struct {
 	RAW []byte
 }
 
-func (cf CloudFlare__P) GET(result []string) ([]string, error) {
+func (cf CloudFlare__P) GET() ([]string, error) {
 	const URL = "https://www.cloudflare.com/ips-v4"
 
 	res, e := http.Get(URL)

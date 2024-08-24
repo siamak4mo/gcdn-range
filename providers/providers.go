@@ -5,13 +5,14 @@ import (
 )
 
 type CDN_Provider interface {
-	GET(results []string) ([]string, error)
+	GET() ([]string, error)
 }
 
 type Provider struct {
 	Pr   CDN_Provider
 	Name string
 	ID   cdn_type
+	CIDR  []string
 }
 
 type cdn_type int
@@ -33,17 +34,27 @@ const (
 // index of Provider in this array must be equal to it's ID
 var CDNs = []Provider{
 	{nil,
-		"maxcdn", Maxcdn_CDN},
+		"maxcdn", Maxcdn_CDN, make([]string, 0)},
 	{CloudFlare__P{},
-		"cloudflare", Cloudflare_CDN},
+		"cloudflare", Cloudflare_CDN, make([]string, 0)},
 	{nil,
-		"fastly", Fastly_CDN},
+		"fastly", Fastly_CDN, make([]string, 0)},
 	{nil,
-		"incapsula", Incapsula_CDN},
+		"incapsula", Incapsula_CDN, make([]string, 0)},
 	{nil,
-		"cachefly", Cachefly_CDN},
+		"cachefly", Cachefly_CDN, make([]string, 0)},
 	{nil,
-		"cloudfront", Cloudfront_CDN},
+		"cloudfront", Cloudfront_CDN, make([]string, 0)},
+}
+
+func (p *Provider) DoFetch() error{
+	s, e := p.Pr.GET()
+	if e != nil {
+		return e
+	}
+
+	p.CIDR = s
+	return nil
 }
 
 func GetCDN(prov int) (Provider, error) {
@@ -63,12 +74,12 @@ func SearchCDN(name string) (Provider, error) {
 	}
 }
 
-func MkCDN(names []string) []Provider {
-	r := make([]Provider, 0)
+func MkCDN(names []string) []*Provider {
+	r := make([]*Provider, 0)
 	for _, name := range names {
 		s, e := SearchCDN(name)
 		if e != nil {
-			r = append(r, s)
+			r = append(r, &s)
 		}
 	}
 	return r
