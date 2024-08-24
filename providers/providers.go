@@ -34,6 +34,7 @@ const (
 	Incapsula_CDN
 	Cachefly_CDN
 	Cloudfront_CDN
+	Arvan_CDN
 )
 
 const (
@@ -64,6 +65,8 @@ var CDNs = []Provider{
 		"cachefly", Cachefly_CDN),
 	newProvider(CloudFront__P{},
 		"cloudfront", Cloudfront_CDN),
+	newProvider(Arvan__P{},
+		"arvancloud", Arvan_CDN),
 }
 
 func (p *Provider) DoFetch(flags int) *Provider {
@@ -109,6 +112,8 @@ func SearchCDN(name string) (Provider, error) {
 	case "cloudfront", "aws", "amazon", "amazonaws":
 		return CDNs[Cloudfront_CDN], nil
 
+	case "arvan", "arvancloud":
+		return CDNs[Arvan_CDN], nil
 	default:
 		return Provider{}, errors.New(CDN_NAME_NOT_FOUND_ERR)
 	}
