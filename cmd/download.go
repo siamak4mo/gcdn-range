@@ -29,7 +29,7 @@ func (dl *Downloader) do() {
 }
 
 func (dl *Downloader) DL_all() *Downloader {
-	dl.Provs = providers.MKCDN_all()
+	dl.Provs = providers.MKProvs()
 	dl.do()
 	return dl
 }
@@ -48,7 +48,7 @@ func (dl *Downloader) DL_name(name string) *Downloader {
 }
 
 func (dl *Downloader) DL_names(names []string) *Downloader {
-	dl.Provs = providers.MkCDN(names)
+	dl.Provs = providers.MkProv(names)
 	dl.do()
 	return dl
 }

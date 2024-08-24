@@ -93,7 +93,7 @@ func SearchCDN(name string) (Provider, error) {
 	}
 }
 
-func MkCDN(names []string) []*Provider {
+func MkProv(names []string) []*Provider {
 	r := make([]*Provider, 0)
 	for _, name := range names {
 		s, e := SearchCDN(name)
@@ -104,7 +104,7 @@ func MkCDN(names []string) []*Provider {
 	return r
 }
 
-func MKCDN_all() []*Provider {
+func MKProvs() []*Provider {
 	r := make([]*Provider, 0)
 	for _, pcpy := range CDNs {
 		r = append(r, &pcpy)
