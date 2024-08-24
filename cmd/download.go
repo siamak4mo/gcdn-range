@@ -21,17 +21,15 @@ func (dl *Downloader) Init() *Downloader {
 
 func (dl *Downloader) do() {
 	for _, p := range dl.Provs {
-		if p.Pr != nil {
-			p.DoFetch()
-			if p.DLerr != nil {
-				fmt.Fprintf(os.Stderr, "Could not download -- %v\n", p.DLerr)
-			}
+		p.DoFetch()
+		if p.DLerr != nil {
+			fmt.Fprintf(os.Stderr, "Could not download %s -- %v\n", p.Name, p.DLerr)
 		}
 	}
 }
 
 func (dl *Downloader) DL_all() *Downloader {
-	//	dl.Provs = make()//
+	dl.Provs = providers.MKCDN_all()
 	dl.do()
 	return dl
 }

@@ -48,7 +48,13 @@ var CDNs = []Provider{
 		"cloudfront", Cloudfront_CDN, make([]string, 0), nil},
 }
 
-func (p *Provider) DoFetch() *Provider{
+func (p *Provider) DoFetch() *Provider {
+	if p == nil || p.Pr == nil {
+		if p != nil {
+			p.DLerr = errors.New("Not Implemented")
+		}
+		return p
+	}
 	s, e := p.Pr.GET()
 	if e != nil {
 		p.DLerr = e
@@ -84,6 +90,14 @@ func MkCDN(names []string) []*Provider {
 		if e != nil {
 			r = append(r, &s)
 		}
+	}
+	return r
+}
+
+func MKCDN_all() []*Provider {
+	r := make([]*Provider, 0)
+	for _, pcpy := range CDNs {
+		r = append(r, &pcpy)
 	}
 	return r
 }
