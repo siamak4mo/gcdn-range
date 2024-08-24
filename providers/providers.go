@@ -52,15 +52,15 @@ func newProvider(pr CDN_Provider, name string, idx cdn_type) Provider {
 
 // index of Provider in this array must be equal to it's ID
 var CDNs = []Provider{
-	newProvider(nil,
+	newProvider(Maxcdn__P{},
 		"maxcdn", Maxcdn_CDN),
 	newProvider(CloudFlare__P{},
 		"cloudflare", Cloudflare_CDN),
-	newProvider(nil,
+	newProvider(Fastly__P{},
 		"fastly", Fastly_CDN),
-	newProvider(nil,
+	newProvider(Incapsula__P{},
 		"incapsula", Incapsula_CDN),
-	newProvider(nil,
+	newProvider(Cachefly__P{},
 		"cachefly", Cachefly_CDN),
 	newProvider(CloudFront__P{},
 		"cloudfront", Cloudfront_CDN),
