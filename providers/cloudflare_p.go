@@ -25,5 +25,6 @@ func (cf CloudFlare__P) GET() ([]string, error) {
 	if e != nil {
 		return nil, e
 	}
+	cf.RAW = nil
 	return strings.Split(string(cf.RAW), "\n"), nil
 }
