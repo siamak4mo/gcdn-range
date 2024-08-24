@@ -11,21 +11,29 @@ type Dl_Writer func(*providers.Provider)
 type Downloader struct {
 	Out   Dl_Writer
 	Provs []*providers.Provider
+	ipFlags int
 }
+
+const (
+	DL_IPv4 = iota
+	DL_IPv6
+	DL_ALL
+)
 
 func NewDownloader() *Downloader {
 	return &Downloader{}
 }
 
-func (dl *Downloader) Init() *Downloader {
+func (dl *Downloader) Init(flags int) *Downloader {
 	dl.Provs = nil
+	dl.ipFlags = flags
 	return dl
 }
 
 func (dl *Downloader) Do() *Downloader {
 	for _, p := range dl.Provs {
 		p.CIDR = make(providers.ProvChan)
-		go p.DoFetch()
+		go p.DoFetch(dl.ipFlags)
 		dl.Out(p)
 		if p.DLerr != nil {
 			fmt.Fprintf(os.Stderr, "Could not download %s -- %v\n", p.Name, p.DLerr)
