@@ -7,8 +7,15 @@ import (
 type ProvChan chan string
 
 type CDN_Provider interface {
-	GET(cout ProvChan) error
+	GET(cout ProvChan, flags int) error
 }
+
+// flags
+const (
+	DL_IPv4 = iota
+	DL_IPv6
+	DL_ALL
+)
 
 type Provider struct {
 	Pr    CDN_Provider
@@ -59,14 +66,14 @@ var CDNs = []Provider{
 		"cloudfront", Cloudfront_CDN),
 }
 
-func (p *Provider) DoFetch() *Provider {
+func (p *Provider) DoFetch(flags int) *Provider {
 	if p == nil || p.Pr == nil {
 		if p != nil {
 			p.DLerr = errors.New("Not Implemented")
 		}
 		return p
 	}
-	e := p.Pr.GET(p.CIDR)
+	e := p.Pr.GET(p.CIDR, flags)
 	if e != nil {
 		p.DLerr = e
 		return p
