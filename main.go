@@ -157,7 +157,7 @@ func main() {
 		// defualt
 	case STD_FILE:
 		e := dl.SetOutPath(cfg.output_filepath)
-		if dl.Out.Writer == nil {
+		if e != nil {
 			fmt.Fprintf(os.Stderr, "%s -- Exiting.\n", e.Error())
 			os.Exit(1)
 		}
