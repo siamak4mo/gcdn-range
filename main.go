@@ -139,14 +139,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	switch cfg.output_t {
-	case STD_OUT:
-		// defualt
-	case STD_FILE:
-		println("for now use:  >> " + cfg.output_filepath)
-		not_imp("FILE")
-	}
-
 	switch cfg.format_o {
 	case FORMAT_RAWV:
 		dl = dl.SetOut(dl.Formatted_stdout)
@@ -160,6 +152,17 @@ func main() {
 		not_imp("tsv")
 	}
 
+	switch cfg.output_t {
+	case STD_OUT:
+		// defualt
+	case STD_FILE:
+		e := dl.SetOutPath(cfg.output_filepath)
+		if dl.Out.Writer == nil {
+			fmt.Fprintf(os.Stderr, "%s -- Exiting.\n", e.Error())
+			os.Exit(1)
+		}
+	}
+
 	// TODO: add ip v4/v6 flags
 
 	switch cfg.providers_t {
@@ -170,4 +173,6 @@ func main() {
 	}
 
 	dl.Do()
+
+	defer dl.Done()
 }
