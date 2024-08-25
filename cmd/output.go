@@ -14,7 +14,18 @@ func (dl *Downloader) SetOut(dw Dl_Writer) *Downloader {
 	return dl
 }
 
-func (*Downloader) Raw_stdout(p *providers.Provider) {
+func (dl *Downloader) SetOutPath(path string) error {
+	file, err := os.OpenFile(path,
+		os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		dl.Out.Writer = nil
+		return err
+	}
+	dl.Out.Writer = file
+	dl.Fout = file
+	return nil
+}
+
 // generic writers
 // each of these functions can be assigned to Downloader.Out.Writer
 func (dl *Downloader) Raw_stdout(p *providers.Provider) {
@@ -32,6 +43,3 @@ func (dl *Downloader) Formatted_stdout(p *providers.Provider) {
 		fmt.Fprintf(dl.Out.Writer, "  - %s\n", cidr)
 	}
 }
-
-// TODO:  file output
-//        json stdout
