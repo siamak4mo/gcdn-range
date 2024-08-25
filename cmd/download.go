@@ -11,6 +11,7 @@ type Dl_Writer func(*providers.Provider)
 
 type Downloader struct {
 	Out     OutputWriter
+	Fout    *os.File
 	Provs   []*providers.Provider
 	ipFlags int
 }
@@ -28,6 +29,12 @@ const (
 
 func NewDownloader() *Downloader {
 	return &Downloader{}
+}
+
+func (dl *Downloader) Done() {
+	if dl.Fout != nil {
+		dl.Fout.Close()
+	}
 }
 
 func (dl *Downloader) Init(flags int) *Downloader {
