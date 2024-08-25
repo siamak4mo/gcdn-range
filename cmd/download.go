@@ -3,20 +3,21 @@ package cmd
 import (
 	"fmt"
 	"gcdn_range/providers"
+	"io"
 	"os"
 )
 
 type Dl_Writer func(*providers.Provider)
 
 type Downloader struct {
+	Out     OutputWriter
 	Provs   []*providers.Provider
 	ipFlags int
-	Out     OutputWriter
 }
 
 type OutputWriter struct {
-	Do   Dl_Writer
-	Path *string
+	Do     Dl_Writer
+	Writer io.Writer
 }
 
 const (
