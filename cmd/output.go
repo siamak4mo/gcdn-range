@@ -28,13 +28,13 @@ func (dl *Downloader) SetOutPath(path string) error {
 
 // generic writers
 // each of these functions can be assigned to Downloader.Out.Writer
-func (dl *Downloader) Raw_stdout(p *providers.Provider) {
+func (dl *Downloader) RAW_Writer(p *providers.Provider) {
 	for cidr := range p.CIDR {
 		fmt.Fprintln(dl.Out.Writer, cidr)
 	}
 }
 
-func (dl *Downloader) Formatted_stdout(p *providers.Provider) {
+func (dl *Downloader) Formated_RAW_Writer(p *providers.Provider) {
 	if p.DLerr != nil {
 		return
 	}
