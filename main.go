@@ -149,9 +149,9 @@ func main() {
 
 	switch cfg.format_o {
 	case FORMAT_RAWV:
-		dl = dl.SetOut(cmd.Formatted_stdout)
+		dl = dl.SetOut(dl.Formatted_stdout)
 	case FORMAT_RAW:
-		dl = dl.SetOut(cmd.Raw_stdout)
+		dl = dl.SetOut(dl.Raw_stdout)
 	case FORMAT_CSV:
 		not_imp("csv")
 	case FORMAT_JSON:

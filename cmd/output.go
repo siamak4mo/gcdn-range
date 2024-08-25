@@ -6,17 +6,19 @@ import (
 )
 
 func (dl *Downloader) SetOut(dw Dl_Writer) *Downloader {
-	dl.Out = dw
+	dl.Out = OutputWriter{
+		Do: dw,
+	}
 	return dl
 }
 
-func Raw_stdout(p *providers.Provider) {
+func (*Downloader) Raw_stdout(p *providers.Provider) {
 	for cidr := range p.CIDR {
 		fmt.Println(cidr)
 	}
 }
 
-func Formatted_stdout(p *providers.Provider) {
+func (*Downloader) Formatted_stdout(p *providers.Provider) {
 	if p.DLerr != nil {
 		return
 	}

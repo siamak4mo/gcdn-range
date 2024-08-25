@@ -9,9 +9,14 @@ import (
 type Dl_Writer func(*providers.Provider)
 
 type Downloader struct {
-	Out   Dl_Writer
-	Provs []*providers.Provider
+	Provs   []*providers.Provider
 	ipFlags int
+	Out     OutputWriter
+}
+
+type OutputWriter struct {
+	Do   Dl_Writer
+	Path *string
 }
 
 const (
@@ -34,7 +39,7 @@ func (dl *Downloader) Do() *Downloader {
 	for _, p := range dl.Provs {
 		p.CIDR = make(providers.ProvChan)
 		go p.DoFetch(dl.ipFlags)
-		dl.Out(p)
+		dl.Out.Do(p)
 		if p.DLerr != nil {
 			fmt.Fprintf(os.Stderr, "Could not download %s -- %v\n", p.Name, p.DLerr)
 		}
