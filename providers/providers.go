@@ -123,7 +123,7 @@ func MkProv(names []string) []*Provider {
 	r := make([]*Provider, 0)
 	for _, name := range names {
 		s, e := SearchCDN(name)
-		if e != nil {
+		if e == nil {
 			r = append(r, &s)
 		}
 	}
