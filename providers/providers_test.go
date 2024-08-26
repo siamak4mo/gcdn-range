@@ -22,3 +22,36 @@ func Test__CDNs_integrity(t *testing.T) {
 		}
 	}
 }
+
+func Test_MKProvs(t *testing.T) {
+	idx := []int{0, 2, len(CDNs) - 1}
+	names := make([]string, len(idx))
+
+	for i := range idx {
+		names[i] = CDNs[i].Name
+	}
+	p := MkProv(names)
+
+	if len(idx) != len(p) {
+		t.Errorf("MKProv test failed, wrong provider list\n")
+	}
+	for i := range idx {
+		if names[i] != p[i].Name {
+			t.Errorf("MKProv test failed, wrong provider list\n")
+		}
+	}
+}
+
+func Test_SearchCDN(t *testing.T) {
+	for i,c := range CDNs {
+		s_c, e := SearchCDN(c.Name)
+		if s_c.Name != c.Name ||
+			int(s_c.id) != i || e != nil {
+			t.Errorf("SearchCDN failed, wrong name or ID\n")
+		}
+	}
+
+	if _, e := SearchCDN("!!!"); e == nil {
+		t.Errorf("SearchCDN nil test failed")
+	}
+}
