@@ -32,6 +32,7 @@ func (cf Maxcdn__P) GET(cout ProvChan, flags int) error {
 			return e
 		}
 		if res.StatusCode != http.StatusOK {
+			res.Body.Close()
 			return e
 		}
 

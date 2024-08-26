@@ -26,10 +26,12 @@ func (cf Fastly__P) GET(cout ProvChan, flags int) error {
 		return e
 	}
 	if res.StatusCode != http.StatusOK {
+		res.Body.Close()
 		return e
 	}
 	cf.RAW, e = io.ReadAll(res.Body)
 	if e != nil {
+		res.Body.Close()
 		return e
 	}
 

@@ -30,6 +30,7 @@ func (cf Incapsula__P) GET(cout ProvChan, flags int) error {
 	}
 	cf.RAW, e = io.ReadAll(res.Body)
 	if e != nil {
+		res.Body.Close()
 		return e
 	}
 
