@@ -3,12 +3,18 @@ package providers
 import (
 	"encoding/json"
 	"errors"
-	"io"
 	"net/http"
 )
 
 type CloudFront__P struct {
 	RAW []byte
+}
+
+type IP_Pref struct {
+	IP string `json:"ip_prefix"`
+}
+type IP_Pref6 struct {
+	IP string `json:"ipv6_prefix"`
 }
 
 func (cf CloudFront__P) GET(cout ProvChan, flags int) error {
@@ -28,64 +34,53 @@ func (cf CloudFront__P) GET(cout ProvChan, flags int) error {
 	if res.StatusCode != http.StatusOK {
 		return e
 	}
-	cf.RAW, e = io.ReadAll(res.Body)
-	if e != nil {
-		return e
-	}
+	dec := json.NewDecoder(res.Body)
 
 	switch flags {
 	case DL_IPv4:
-		d := struct {
-			Prefexs []struct {
-				IP_pref string `json:"ip_prefix"`
-			} `json:"prefixes"`
-		}{}
-
-		e = json.Unmarshal(cf.RAW, &d)
-		if e != nil {
-			return e
+		nextArrayToken(dec) // go to the first `[` beginning of ipv4
+		for dec.More() {
+			var data IP_Pref
+			e = dec.Decode(&data)
+			if e != nil {
+				break
+			}
+			cout <- data.IP
 		}
 
-		for _, ip := range d.Prefexs {
-			cout <- ip.IP_pref
-		}
-		break
 	case DL_IPv6:
-		d := struct {
-			Prefexs_v6 []struct {
-				IP_pref string `json:"ipv6_prefix"`
-			} `json:"ipv6_prefixes"`
-		}{}
-		e = json.Unmarshal(cf.RAW, &d)
-		if e != nil {
-			return e
+		nextArrayToken(dec) // beginning of ipv4
+		nextArrayToken(dec) // beginning of ipv6
+		var data6 IP_Pref6
+		for dec.More() {
+			e = dec.Decode(&data6)
+			if e != nil {
+				break
+			}
+			cout <- data6.IP
 		}
 
-		for _, ip := range d.Prefexs_v6 {
-			cout <- ip.IP_pref
-		}
-		break
 	case DL_ALL:
-		d := struct {
-			Prefexs []struct {
-				IP_pref string `json:"ip_prefix"`
-			} `json:"prefixes"`
-			Prefexs_v6 []struct {
-				IP_pref string `json:"ipv6_prefix"`
-			} `json:"ipv6_prefixes"`
-		}{}
-		e = json.Unmarshal(cf.RAW, &d)
-		if e != nil {
-			return e
+		nextArrayToken(dec) // beginning of ipv4
+		var (
+			data  IP_Pref
+			data6 IP_Pref6
+		)
+		for dec.More() {
+			e = dec.Decode(&data)
+			if e != nil {
+				break
+			}
+			cout <- data.IP
 		}
-
-		for _, ip := range d.Prefexs {
-			cout <- ip.IP_pref
+		nextArrayToken(dec) // beginning of ipv6
+		for dec.More() {
+			e = dec.Decode(&data6)
+			if e != nil {
+				break
+			}
+			cout <- data6.IP
 		}
-		for _, ip := range d.Prefexs_v6 {
-			cout <- ip.IP_pref
-		}
-		break
 	}
 	return nil
 }
