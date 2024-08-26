@@ -122,11 +122,6 @@ func arg_parser() error {
 	return nil
 }
 
-func not_imp(s string) {
-	println(s + " not implemented yet!")
-	os.Exit(1)
-}
-
 func main() {
 	e := arg_parser()
 	if e != nil {
