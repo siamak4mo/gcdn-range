@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"gcdn_range/cmd"
 	"os"
+	"strings"
 )
 
 const (
@@ -117,7 +118,8 @@ func arg_parser() error {
 				i++
 				argc--
 				cfg.providers_t = PROV_SELECTED
-				cfg.providers = append(cfg.providers, os.Args[i])
+				provs := strings.Split(os.Args[i], ",")
+				cfg.providers = append(cfg.providers, provs...)
 			} else {
 				return errors.New("provider flag needs an argument")
 			}
@@ -127,7 +129,8 @@ func arg_parser() error {
 				i++
 				argc--
 				cfg.providers_t = PROV_SELECTED
-				cfg.providers = append(cfg.providers, os.Args[i:]...)
+				provs := strings.Split(os.Args[i], ",")
+				cfg.providers = append(cfg.providers, provs...)
 				return nil
 			}
 
@@ -142,12 +145,13 @@ func arg_parser() error {
 }
 
 func help() {
-	fmt.Printf("Usage:  cdn-range [OPTIONS]\n\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n",
+	fmt.Printf("Usage:  cdn-range [OPTIONS]\n\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n",
 		"OPTIONS:",
 		"       --output, -o              to specify output file path",
 		"      --verbose, -v              include provider names with formatting",
 		"    --providers, -p              to download for specific provide(s)",
 		"                                 available providers: arvan, cachefly, cloudflare, aws, fastly, incapsula, maxcdn",
+		"                                 even use comma separated values or multiple `-p`",
 		"       --format, -f              output format (raw, json, csv, tsv)",
 		"                                 also -json, -csv, -tsv are available",
 		"         --ipv6, -6              to only download IPv6 (some provider might not have)",
