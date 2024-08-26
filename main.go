@@ -138,7 +138,6 @@ func arg_parser() error {
 			return errors.New(
 				fmt.Sprintf("unknown flag `%s` has been provided", os.Args[i]),
 			)
-			help()
 		}
 	}
 	return nil
@@ -163,6 +162,7 @@ func main() {
 	e := arg_parser()
 	if e != nil {
 		fmt.Fprintf(os.Stderr, "%v -- exiting.\n", e.Error())
+		help()
 		os.Exit(1)
 	}
 
