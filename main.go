@@ -91,7 +91,7 @@ func arg_parser() error {
 			cfg.format_o = FORMAT_JSON
 		case "-csv", "--csv", "--cs", "-cs":
 			cfg.format_o = FORMAT_CSV
-		case "-tsc", "--tsv", "--ts", "-ts":
+		case "-tsv", "--tsv", "--ts", "-ts":
 			cfg.format_o = FORMAT_TSV
 
 		case "--providers", "--provider", "--prov", "-p":
@@ -149,7 +149,7 @@ func main() {
 	case FORMAT_JSON:
 		dl = dl.SetOut(dl.Json_Writer)
 	case FORMAT_TSV:
-		not_imp("tsv")
+		dl = dl.SetOut(dl.TSV_Writer)
 	}
 
 	switch cfg.output_t {

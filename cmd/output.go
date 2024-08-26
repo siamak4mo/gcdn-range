@@ -71,3 +71,11 @@ func (dl *Downloader) CSV_Writer(p *providers.Provider) {
 		)
 	}
 }
+
+func (dl *Downloader) TSV_Writer(p *providers.Provider) {
+	for cidr := range p.CIDR {
+		fmt.Fprintf(dl.Out.Writer, "%s\t%s\n",
+			p.Name, cidr,
+		)
+	}
+}
