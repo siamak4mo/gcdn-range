@@ -58,6 +58,9 @@ func arg_parser() error {
 			if cfg.format_o == FORMAT_RAW {
 				cfg.format_o = FORMAT_RAWV
 			}
+		case "--help", "-h":
+			help()
+			os.Exit(0)
 
 		case "--output", "--out", "-output", "-out", "-o":
 			if argc >= 1 {
@@ -132,9 +135,24 @@ func arg_parser() error {
 			return errors.New(
 				fmt.Sprintf("unknown flag `%s` has been provided", os.Args[i]),
 			)
+			help()
 		}
 	}
 	return nil
+}
+
+func help() {
+	fmt.Printf("Usage:  cdn-range [OPTIONS]\n\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n",
+		"OPTIONS:",
+		"       --output, -o              to specify output file path",
+		"      --verbose, -v              include provider names with formatting",
+		"    --providers, -p              to download for specific provide(s)",
+		"                                 available providers: arvan, cachefly, cloudflare, aws, fastly, incapsula, maxcdn",
+		"       --format, -f              output format (raw, json, csv, tsv)",
+		"                                 also -json, -csv, -tsv are available",
+		"         --ipv6, -6              to only download IPv6 (some provider might not have)",
+		" --include-ipv6, -I              to include IPv6",
+	)
 }
 
 func main() {
