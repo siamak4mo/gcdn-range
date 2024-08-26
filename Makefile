@@ -5,7 +5,8 @@ BIN=cdn-range.out
 OUT=-o $(BIN)
 
 # test
-TEST=./providers
+TEST_1=./providers
+TEST_2=./cmd
 
 # main program
 MAIN=./main.go
@@ -29,4 +30,5 @@ no_gcc_run:
 
 # test
 test:
-	make -C $(TEST) test
+	make -C $(TEST_1) test
+	make -C $(TEST_2) test
