@@ -1,7 +1,9 @@
 package providers
 
 import (
+	"bufio"
 	"errors"
+	"net/http"
 )
 
 type ProvChan chan string
@@ -136,4 +138,13 @@ func MKProvs() []*Provider {
 		r = append(r, &CDNs[i])
 	}
 	return r
+}
+
+// internal functions
+func rw2cahn_from_http(res *http.Response, cout chan string) {
+	scanner := bufio.NewScanner(res.Body)
+	var e error
+	for ; scanner.Scan() && e == nil; e = scanner.Err() {
+		cout <- scanner.Text()
+	}
 }
