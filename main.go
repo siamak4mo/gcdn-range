@@ -22,6 +22,11 @@ const (
 	// provider(s)
 	PROV_ALL
 	PROV_SELECTED
+
+	// ip v4/v6
+	IPV4_ONLY
+	IPV6_ONLY
+	IPV6_INCLUDE
 )
 
 type config struct {
@@ -32,12 +37,15 @@ type config struct {
 
 	providers_t uint8    // all or selected
 	providers   []string // provider(s) in selected mode
+
+	ipv uint8 // default: v4_only
 }
 
 var cfg = config{
 	output_t:    STD_OUT,
 	format_o:    FORMAT_RAW,
 	providers_t: PROV_ALL,
+	ipv:         IPV4_ONLY,
 	providers:   make([]string, 0),
 }
 
@@ -93,6 +101,14 @@ func arg_parser() error {
 			cfg.format_o = FORMAT_CSV
 		case "-tsv", "--tsv", "--ts", "-ts":
 			cfg.format_o = FORMAT_TSV
+
+
+		case "-ip6", "--ip6", "-ipv6", "--ipv6":
+			cfg.ipv = IPV6_ONLY
+		case "-I6", "-I",
+			"-ipall", "--ipall", "--ip-all",
+			"-include-ipv6", "--include-ipv6":
+			cfg.ipv = IPV6_INCLUDE
 
 		case "--providers", "--provider", "--prov", "-p":
 			if argc >= 1 {
@@ -158,16 +174,22 @@ func main() {
 		}
 	}
 
-	// TODO: add ip v4/v6 flags
+	switch cfg.ipv {
+	case IPV4_ONLY:
+		dl = dl.Init(cmd.DL_IPv4)
+	case IPV6_ONLY:
+		dl = dl.Init(cmd.DL_IPv6)
+	case IPV6_INCLUDE:
+		dl = dl.Init(cmd.DL_ALL)
+	}
 
 	switch cfg.providers_t {
 	case PROV_ALL:
-		dl = dl.Init(cmd.DL_IPv4).DL_all()
+		dl = dl.DL_all()
 	case PROV_SELECTED:
-		dl = dl.Init(cmd.DL_IPv4).DL_names(cfg.providers)
+		dl = dl.DL_names(cfg.providers)
 	}
 
 	dl.Do()
-
 	defer dl.Done()
 }
