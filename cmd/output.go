@@ -64,3 +64,10 @@ func (dl *Downloader) Json_Writer(p *providers.Provider) {
 	fmt.Fprintln(dl.Out.Writer, "\n]")
 }
 
+func (dl *Downloader) CSV_Writer(p *providers.Provider) {
+	for cidr := range p.CIDR {
+		fmt.Fprintf(dl.Out.Writer, "%s,%s\n",
+			p.Name, cidr,
+		)
+	}
+}
