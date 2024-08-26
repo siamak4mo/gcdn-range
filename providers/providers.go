@@ -2,6 +2,7 @@ package providers
 
 import (
 	"bufio"
+	"encoding/json"
 	"errors"
 	"net/http"
 )
@@ -146,5 +147,14 @@ func rw2cahn_from_http(res *http.Response, cout chan string) {
 	var e error
 	for ; scanner.Scan() && e == nil; e = scanner.Err() {
 		cout <- scanner.Text()
+	}
+}
+
+func nextArrayToken(dec *json.Decoder) {
+	for {
+		t, err := dec.Token()
+		if t == json.Delim('[') || err != nil {
+			break
+		}
 	}
 }
