@@ -26,7 +26,7 @@ func (cf Maxcdn__P) GET(cout ProvChan, flags int) error {
 		return errors.New("Null Chanel")
 	}
 
-	for _,url := range cf.URL {
+	for _, url := range cf.URL {
 		res, e := http.Get(url)
 		if e != nil {
 			return e

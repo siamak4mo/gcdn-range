@@ -134,7 +134,7 @@ func MkProv(names []string) []*Provider {
 
 func MKProvs() []*Provider {
 	r := make([]*Provider, 0)
-	for i,_ := range CDNs {
+	for i, _ := range CDNs {
 		r = append(r, &CDNs[i])
 	}
 	return r
