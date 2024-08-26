@@ -147,7 +147,7 @@ func main() {
 	case FORMAT_CSV:
 		not_imp("csv")
 	case FORMAT_JSON:
-		not_imp("json")
+		dl = dl.SetOut(dl.Json_Writer)
 	case FORMAT_TSV:
 		not_imp("tsv")
 	}

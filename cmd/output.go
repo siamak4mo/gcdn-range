@@ -43,3 +43,24 @@ func (dl *Downloader) Formated_RAW_Writer(p *providers.Provider) {
 		fmt.Fprintf(dl.Out.Writer, "  - %s\n", cidr)
 	}
 }
+
+func (dl *Downloader) Json_Writer(p *providers.Provider) {
+	fmt.Fprintln(dl.Out.Writer, "[")
+	cidr, ok := <-p.CIDR
+	for ok {
+		fmt.Fprintf(dl.Out.Writer,
+			"  {\n    \"%s\": \"%s\",\n    \"%s\": \"%s\"\n  }",
+			"provider", p.Name,
+			"range", cidr,
+		)
+
+		select{
+			case cidr, ok = <-p.CIDR:
+			if ok {
+				fmt.Fprintln(dl.Out.Writer, ",")
+			}
+		}
+	}
+	fmt.Fprintln(dl.Out.Writer, "\n]")
+}
+
