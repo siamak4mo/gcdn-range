@@ -1,30 +1,42 @@
 package providers
-        
+
 import (
-	"io"
+	"errors"
 	"net/http"
-	"strings"
 )
 
-type TEST__P struct {
-	RAW []byte
+type CDN_NAME__P struct {
+	URL []string
 }
 
-func (t TEST__P) GET(result []string) ([]string, error){
-	const URL = "https://cdn.tld/ips-v4"
+func (cf CDN_NAME__P) GET(cout ProvChan, flags int) error {
+	defer func() {
+		close(cout)
+	}()
 
-	res, e := http.Get(URL)
-	if e != nil {
-		return nil, e
+	switch flags {
+	case DL_IPv4:
+		cf.URL = []string{"https://www.cdn.net/ips.txt"}
+	case DL_IPv6:
+		cf.URL = []string{"https://www.cdn.net/ipv6.txt"}
+	case DL_ALL:
+                cf.URL = []string{"https://www.cdn.net/ips.txt",
+                                  "https://www.cdn.net/ipv6.txt"}
 	}
-	if res.StatusCode != http.StatusOK {
-		return nil, e
+	if cout == nil {
+		return errors.New("Null Chanel")
 	}
 
-	cf.RAW, e = io.ReadAll(res.Body)
-	if e != nil {
-		return nil, e
-	}
+	for _, url := range cf.URL {
+		res, e := http.Get(url)
+		if e != nil {
+			return e
+		}
+		if res.StatusCode != http.StatusOK {
+			return e
+		}
 
-	return strings.Split(string(cf.RAW), "\n"), nil
+		rw2cahn_from_http(res, cout)
+	}
+	return nil
 }
