@@ -141,7 +141,10 @@ func MKProvs() []*Provider {
 	return r
 }
 
-// internal functions
+/**
+ *  internal functions
+ */
+// reads raw line until the EOF from @res and writes on @cout
 func rw2cahn_from_http(res *http.Response, cout chan string) {
 	scanner := bufio.NewScanner(res.Body)
 	var e error
@@ -150,6 +153,7 @@ func rw2cahn_from_http(res *http.Response, cout chan string) {
 	}
 }
 
+// iterates on json @dec, until reaches beginning of an array
 func nextArrayToken(dec *json.Decoder) {
 	for {
 		t, err := dec.Token()
