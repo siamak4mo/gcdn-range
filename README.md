@@ -1,11 +1,12 @@
 # cdn-range
 Golang cdn-search implementation
-It's a tool to download IP ranges used by CDNs
-currently supported: AWS, Cloudflare, Akamai, Incapsula, Fastly, ArvanCloud
+
+It's a tool to download IP ranges used by CDNs,
+currently supports AWS, Cloudflare, Akamai, Incapsula, Fastly and ArvanCloud
 
 ---
 
-# Compilation
+## Compilation
 
 #### go
 ``` shell
@@ -25,7 +26,7 @@ make test
 ```
 
 
-# Usage
+## Usage
 ``` shell
 # verbose
 ./cdn-range -v
@@ -36,6 +37,6 @@ make test
 # output formats
 ./cdn-range -json  [also: -csv, -tsv]
 
-# specific provider
+# specific provider(s)
 ./cdn-range -p aws,cloudflare
 ```
