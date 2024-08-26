@@ -102,8 +102,7 @@ func arg_parser() error {
 		case "-tsv", "--tsv", "--ts", "-ts":
 			cfg.format_o = FORMAT_TSV
 
-
-		case "-ip6", "--ip6", "-ipv6", "--ipv6":
+		case "-6", "-ip6", "--ip6", "-ipv6", "--ipv6":
 			cfg.ipv = IPV6_ONLY
 		case "-I6", "-I",
 			"-ipall", "--ipall", "--ip-all",
