@@ -2,19 +2,15 @@ package providers
 
 import (
 	"errors"
-	"io"
 	"net/http"
-	"strings"
 )
 
 type CloudFlare__P struct {
 	URL []string
-	RAW []byte
 }
 
 func (cf CloudFlare__P) GET(cout ProvChan, flags int) error {
 	defer func() {
-		cf.RAW = nil
 		close(cout)
 	}()
 
@@ -40,14 +36,7 @@ func (cf CloudFlare__P) GET(cout ProvChan, flags int) error {
 			return e
 		}
 
-		cf.RAW, e = io.ReadAll(res.Body)
-		if e != nil {
-			return e
-		}
-
-		for _, v := range strings.Split(string(cf.RAW), "\n") {
-			cout <- v
-		}
+		rw2cahn_from_http(res, cout)
 	}
 	return nil
 }
